@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://circleci.com/gh/commercetools/enzyme-extensions">
-    <img alt="CircleCI Status" src="https://circleci.com/gh/commercetools/enzyme-extensions.svg?style=shield&circle-token=ABC-TOKEN">
+    <img alt="CircleCI Status" src="https://circleci.com/gh/commercetools/enzyme-extensions.svg?style=shield&circle-token=e58fc71dcfcab717a3ab1e529da76ab127d33a5e">
   </a>
 </p>
 
