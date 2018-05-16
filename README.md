@@ -15,7 +15,7 @@
 
 1.  Add package
 
-`yarn add @commercetools/enzyme-extensions --D`
+`yarn add @commercetools/enzyme-extensions -D`
 
 2.  Add a test setup file (test runner dependent)
 
@@ -46,16 +46,14 @@ Expand a `ShallowWrapper` through the passed `node` and `propName` with the pass
 import FunctionAsAChildComponent from 'somewhere';
 
 describe('Component', () => {
-  const createfunctionAsAChildComponentProps = props => ({
-    onChange: jest.fn(),
-    ...props,
-  });
   const wrapper = shallow(<Component />);
+  const nestedWrapperProps = {
+     onChange: jest.fn(),
+     ...props,
+  }
   let nestedWrapper;
-  let nestedWrapperProps;
 
-  beforeEach(() => {
-    nestedWrapperProps = createfunctionAsAChildComponentProps();
+  beforeEach(() => {  
     nestedWrapper = wrapper.expand(FunctionAsAChildComponent, {
       propName: 'render',
       props: nestedWrapperProps,
