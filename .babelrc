@@ -1,0 +1,23 @@
+{
+  "compact": true,
+  "env": {
+    "development": {
+      "plugins": [
+        "transform-class-properties",
+        "transform-export-extensions",
+        "transform-object-rest-spread"
+      ],
+      "presets": [
+        [
+          "env",
+          {
+            "targets": {
+              "browsers": ["Chrome 60", "Firefox 56", "Edge 15"]
+            },
+            "include": ["transform-es2015-classes"]
+          }
+        ]
+      ]
+    }
+  }
+}

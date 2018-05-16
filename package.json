@@ -1,0 +1,36 @@
+{
+   "name": "@commercetools/enzyme-extensions",
+   "version": "0.0.0",
+   "description":
+      "Enzyme extensions trailored at improving dealing with shallowly rendered wrappers",
+   "main": "dist/index.js",
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "precompile": "rm -rf dist; mkdir dist",
+      "compile": "babel -d dist src",
+      "prepublish": "npm run compile"
+   },
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/commercetools/enzyme-extensions.git"
+   },
+   "keywords": [],
+   "author": "Tobias Deekens <tobias.deekens@commercetools.de>",
+   "license": "MIT",
+   "bugs": {
+      "url": "https://github.com/commercetools/enzyme-extensions/issues"
+   },
+   "homepage": "https://github.com/commercetools/enzyme-extensions#readme",
+   "dependencies": {
+      "common-tags": "1.7.2",
+      "react-display-name": "0.2.4"
+   },
+   "devDependencies": {
+      "babel-cli": "6.26.0",
+      "babel-core": "6.26.3",
+      "babel-plugin-transform-class-properties": "6.24.1",
+      "babel-plugin-transform-export-extensions": "6.22.0",
+      "babel-plugin-transform-object-rest-spread": "6.26.0",
+      "babel-preset-env": "1.7.0"
+   }
+}
