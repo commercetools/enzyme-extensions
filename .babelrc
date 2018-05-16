@@ -1,23 +1,33 @@
 {
-  "compact": true,
   "env": {
-    "development": {
-      "plugins": [
-        "transform-class-properties",
-        "transform-export-extensions",
-        "transform-object-rest-spread"
-      ],
+    "test": {
       "presets": [
         [
           "env",
           {
             "targets": {
-              "browsers": ["Chrome 60", "Firefox 56", "Edge 15"]
-            },
-            "include": ["transform-es2015-classes"]
+              "browsers": ["last 1 versions"]
+            }
           }
-        ]
+        ],
+        "react",
+        "stage-0"
       ]
+    },
+    "production": {
+      "presets": [
+        [
+          "env",
+          {
+            "targets": {
+              "browsers": ["last 2 versions", "ie >= 11"]
+            },
+            "modules": false
+          }
+        ],
+        "react",
+        "stage-0"
+      ],
     }
   }
 }
