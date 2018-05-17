@@ -4,7 +4,6 @@
  "description": "Enzyme extensions tailored at improving dealing with shallowly rendered wrappers",
  "main": "src/index.js",
  "scripts": {
-  "postinstall": "check-node-version --package --print",
   "precommit": "lint-staged",
   "format": "npm run format:md && npm run format:js",
   "commitmsg": "commitlint -e $GIT_PARAMS",
