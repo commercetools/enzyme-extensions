@@ -31,11 +31,11 @@ aliases:
     name: Unit testing
     # Limiting the workers of Jest to 10
     # as the build otherwise dies due to resouce restrictions.
-    command: yarn test --maxWorkers=10
+    command: yarn test
 
   - &unit_test_with_coverage
     name: Unit testing (with coverage report)
-    command: yarn test:ci:coverage --maxWorkers=10
+    command: yarn test:ci:coverage
 
 node6Environment: &node10Environment
   docker:
