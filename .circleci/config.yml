@@ -33,6 +33,10 @@ aliases:
     # as the build otherwise dies due to resouce restrictions.
     command: yarn test --maxWorkers=10
 
+  - &unit_test_with_coverage
+    name: Unit testing (with coverage report)
+    command: yarn test:ci:coverage --maxWorkers=10
+
 node6Environment: &node10Environment
   docker:
     - image: circleci/node:10
@@ -55,7 +59,7 @@ jobs:
       - restore_cache: *restore_yarn_cache
       - run: *install
       - run: *build
-      - run: *unit_test
+      - run: *unit_test_with_coverage
 
 workflows:
   version: 2

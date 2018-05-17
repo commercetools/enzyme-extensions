@@ -15,7 +15,8 @@
   "format:md": "prettier --parser markdown --write '*.md'",
   "lint": "jest --config .jestrc.lint.json",
   "test": "cross-env NODE_ENV=test jest --config .jestrc.test.json",
-  "test:watch": "cross-env NODE_ENV=test jest --config .jestrc.test.json --watch"
+  "test:watch": "cross-env NODE_ENV=test jest --config .jestrc.test.json --watch",
+  "test:ci:coverage": "cross-env NODE_ENV=test npm test -- --no-watchman --coverage && codecov"
  },
  "repository": {
   "type": "git",
@@ -50,6 +51,7 @@
   "babel-preset-react": "6.24.1",
   "babel-preset-stage-0": "^6.24.1",
   "check-node-version": "3.2.0",
+  "codecov": "3.0.2",
   "cross-env": "5.1.5",
   "enzyme": "3.3.0",
   "enzyme-adapter-react-16": "^1.1.1",
