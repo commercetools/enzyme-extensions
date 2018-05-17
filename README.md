@@ -15,6 +15,71 @@
   <img alt="Made with Coffee" src="https://img.shields.io/badge/made%20with-%E2%98%95%EF%B8%8F%20coffee-yellow.svg">
 </p>
 
+## Why we built this
+
+* We _like to shallow render_ and avoid mounting
+  * 🤺 Shallow rendering is fast and ensures that you only interact with the _unit under test_
+  * 🏙 Shallow rendering ensures that you do _not snapshot past your test's concern_
+  * 🏎 Shallow rendering has shown to be _more performant_ for us than mounting
+* We like _declarative components_ and _Render Props_
+  * 🧠 We can _compose components_ easily while following along their interactions
+  * 🔪 We like _stubbing_ to test individual pieces of logic
+
+Taking all of the above into account we often felt pain when `shallow` rendering a component with lots of children with Render Props. Often things such as:
+
+```js
+let wrapper1;
+let wrapper2;
+let wrapper3;
+
+beforeEach(() => {
+  wrapper1 = shallow(<Component1 {...props} />);
+  wrapper2 = shallow(
+    <div>
+      {wrapper1.find(RenderPropComponent1).prop('render')({
+        // Assume that these props are defined somewhere
+        propsForRenderPropComponent1,
+      })}
+    </div>
+  );
+  wrapper3 = shallow(
+    <div>
+      {wrapper2.find(RenderPropComponent2).prop('children')({
+        propsForRenderPropComponent2,
+      })}
+    </div>
+  );
+});
+
+it('should match snapshot', () => {
+  expect(wrapper3).toMatchSnapshot();
+});
+```
+
+This quickly got out of hand and the "lines to first `it`" became too many. Tests felt bloated and brittle with a lot of noise around the actual important things. However, the logic felt repetitive which is often a good fit for a tool. This is where `expand` comes into play. The above would become:
+
+```js
+let wrapper;
+
+beforeEach(() => {
+  wrapper = shallow(<Component1 {...props} />)
+    .expand(RenderPropComponent1, {
+      propName: 'render',
+      props: propsForRenderPropComponent1,
+    })
+    .expand(RenderPropComponent2, {
+      // The `propName` `children` is the default
+      props: propsForRenderPropComponent2,
+    });
+});
+
+it('should match snapshot', () => {
+  expect(wrapper3).toMatchSnapshot();
+});
+```
+
+This is way more readable and easier to follow along. At the same time everything is still rendered `shallow`ly and the unit under test is well scoped.
+
 ## Installation
 
 1.  Add package
@@ -44,7 +109,13 @@ ShallowWrapper.prototype.expand = expand;
 
 #### `expand(node, { propName: string, props: Object })`
 
-Expand a `ShallowWrapper` through the passed `node` and `propName` with the passed `props`.
+Expand a `ShallowWrapper` through the passed `node` and `propName` with the passed `props`. The `options` can have:
+
+1.  `propName`: the prop being the Render Prop - so `children`, `render` or any other `renderThatThingy`
+2.  `props`: the props you want to pass into the Render Prop based component
+3.  `wrapper`: defaults to `div` used to wrap the component. Often it's `null` when wanting to take a snapshot after a sequence of chained `expand`s
+
+_Note_: that any other properties on `options` than listed above are automatially forwarded to `shallow(node, options)`. This allows you to e.g. pass on a stubbed `context`.
 
 ```js
 import FunctionAsAChildComponent from 'somewhere';
