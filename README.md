@@ -67,6 +67,12 @@ describe('Component', () => {
   it('should match snapshot', () => {
     expect(nestedWrapper).toMatchSnapshot();
   });
+
+  it('should pass `onClick` to `<button>`', () => {
+    nestedWrapper.find('button').prop('onClick')();
+
+    expect(nestedWrapperProps.onChange).toHaveBeenCalled();
+  });
 });
 ```
 
@@ -80,11 +86,14 @@ import Icon from 'somewhere';
 describe('Component', () => {
   const wrapper = shallow(<Component />).until(Icon);
 
-  it('should render one Icon', () => {
+  it('should render one `<Icon>`', () => {
     expect(wrapper).toRenderElementTimes(Icon, 1);
   });
-  it('should render two Buttons', () => {
-    expect(wrapper).toRenderElementTimes('Button', 2);
+
+  it('should render two `<buttons>`', () => {
+    expect(wrapper).toRenderElementTimes('button', 2);
   });
 });
 ```
+
+_Note_: to get the `toRenderElementTimes` and an `toRender` matcher checkout our [@commercetools/jest-enzyme-matchers](https://github.com/commercetools/jest-enzyme-matchers).
