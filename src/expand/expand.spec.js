@@ -4,10 +4,7 @@ import Adapter from 'enzyme-adapter-react-16';
 import ShallowWrapper from 'enzyme/ShallowWrapper';
 import expand from './expand';
 
-beforeAll(() => {
-  Enzyme.configure({ adapter: new Adapter() });
-  ShallowWrapper.prototype.expand = expand;
-});
+const TestComponent = () => <div />;
 
 class Child extends React.Component {
   handleChange = () => {};
@@ -36,23 +33,57 @@ class Host extends React.Component {
 }
 
 describe('expand', () => {
-  const childProps = { onChange: jest.fn() };
+  const createChildProps = props => ({ onChange: jest.fn(), ...props });
+  let wrapper;
+  let childProps;
 
-  test('expand through the node', () => {
-    const wrapper = shallow(<Host />).expand(Child, {
+  beforeAll(() => {
+    Enzyme.configure({ adapter: new Adapter() });
+    ShallowWrapper.prototype.expand = expand;
+  });
+
+  beforeEach(() => {
+    childProps = createChildProps();
+
+    wrapper = shallow(<Host />).expand(Child, {
       propName: 'render',
       props: childProps,
     });
+  });
+
+  it('should expand through to the node', () => {
     expect(wrapper.contains('button')).toBe(true);
   });
 
-  test('passes props to node', () => {
-    const wrapper = shallow(<Host />).expand(Child, {
-      propName: 'render',
-      props: childProps,
+  describe('with props', () => {
+    beforeEach(() => {
+      wrapper.prop('onClick')();
     });
-    wrapper.prop('onClick')();
 
-    expect(childProps.onChange).toHaveBeenCalled();
+    it('should pass props to node', () => {
+      expect(childProps.onChange).toHaveBeenCalled();
+    });
+  });
+
+  describe('when node to expand is not found', () => {
+    it('should throw', () => {
+      expect(() => {
+        shallow(<Host />).expand(TestComponent, {
+          propName: 'render',
+          props: childProps,
+        });
+      }).toThrow();
+    });
+  });
+
+  describe('when render prop is not a function', () => {
+    it('should throw', () => {
+      expect(() => {
+        shallow(<Host />).expand(Child, {
+          propName: 'nonDefinedrenderProp',
+          props: childProps,
+        });
+      }).toThrow();
+    });
   });
 });

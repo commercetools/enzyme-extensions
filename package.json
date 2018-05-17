@@ -14,7 +14,8 @@
   "format:js": "prettier --write 'src/**/*.js'",
   "format:md": "prettier --parser markdown --write '*.md'",
   "lint": "jest --config .jestrc.lint.json",
-  "test": "cross-env NODE_ENV=test jest --config .jestrc.test.json"
+  "test": "cross-env NODE_ENV=test jest --config .jestrc.test.json",
+  "test:watch": "cross-env NODE_ENV=test jest --config .jestrc.test.json --watch"
  },
  "repository": {
   "type": "git",

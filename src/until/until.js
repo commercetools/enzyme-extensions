@@ -1,6 +1,10 @@
-const shallowRecursively = (wrapper, selector) => {
-  // Do not try to shallow render empty nodes and host elements
-  // (a.k.a primitives). Simply return the wrapper in that case.
+const shallowRecursively = (wrapper, selector, options, depthMemo = 0) => {
+  if (options.maxDepth && depthMemo >= options.maxDepth)
+    throw new Error(
+      `@commercetools/enzyme-extensions/until: the specified 'node' was not found before diving ${
+        options.maxDepth
+      } levels deep.`
+    );
   if (
     wrapper.isEmptyRender() ||
     typeof wrapper.getElement().type === 'string'
@@ -10,9 +14,11 @@ const shallowRecursively = (wrapper, selector) => {
 
   return selector && wrapper.is(selector)
     ? wrapper
-    : shallowRecursively(wrapper.dive(), selector);
+    : shallowRecursively(wrapper.dive(), selector, options, ++depthMemo);
 };
 
-export default function until(selector) {
-  return this.single('until', () => shallowRecursively(this, selector));
+export default function until(selector, options = {}) {
+  return this.single('until', () =>
+    shallowRecursively(this, selector, options)
+  );
 }
