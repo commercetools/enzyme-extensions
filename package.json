@@ -1,6 +1,6 @@
 {
  "name": "@commercetools/enzyme-extensions",
- "version": "0.0.0",
+ "version": "1.0.0",
  "description": "Enzyme extensions tailored at improving dealing with shallowly rendered wrappers",
  "main": "dist/index.js",
  "scripts": {
