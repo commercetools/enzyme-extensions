@@ -1,5 +1,10 @@
 const shallowRecursively = (wrapper, selector, options, depthMemo = 0) => {
-  if (options.maxDepth && depthMemo >= options.maxDepth)
+  const defaultedOptions = {
+    maxDepth: null,
+    ...options,
+  };
+
+  if (defaultedOptions.maxDepth && depthMemo >= defaultedOptions.maxDepth)
     throw new Error(
       `@commercetools/enzyme-extensions/until: the specified 'node' was not found before diving ${
         options.maxDepth
@@ -14,7 +19,12 @@ const shallowRecursively = (wrapper, selector, options, depthMemo = 0) => {
 
   return selector && wrapper.is(selector)
     ? wrapper
-    : shallowRecursively(wrapper.dive(), selector, options, ++depthMemo);
+    : shallowRecursively(
+        wrapper.dive(),
+        selector,
+        defaultedOptions,
+        ++depthMemo
+      );
 };
 
 module.exports = function until(selector, options = {}) {

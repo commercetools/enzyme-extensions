@@ -2,14 +2,14 @@ const React = require('react');
 const omit = require('lodash.omit');
 const { shallow } = require('enzyme');
 
-const shallowExpand = (wrapper, throughNode, options) => {
+const shallowExpand = (wrapper, selector, options) => {
   const defaultedOptions = {
     propName: 'children',
     props: {},
     wrapper: 'div',
     ...options,
   };
-  const hostWrapper = wrapper.find(throughNode);
+  const hostWrapper = wrapper.is(selector) ? wrapper : wrapper.find(selector);
   const render = hostWrapper.prop(defaultedOptions.propName);
 
   if (hostWrapper.length === 0)
@@ -39,6 +39,6 @@ const shallowExpand = (wrapper, throughNode, options) => {
   return nextWrapper;
 };
 
-module.exports = function(throughNode, options = {}) {
-  return this.single('expand', () => shallowExpand(this, throughNode, options));
+module.exports = function(selector, options = {}) {
+  return this.single('expand', () => shallowExpand(this, selector, options));
 };

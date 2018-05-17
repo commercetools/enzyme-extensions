@@ -15,17 +15,9 @@
   <img alt="Made with Coffee" src="https://img.shields.io/badge/made%20with-%E2%98%95%EF%B8%8F%20coffee-yellow.svg">
 </p>
 
-## Why we built this
+## What does this look like?
 
-* We _like to shallow render_ and avoid mounting
-  * 🤺 Shallow rendering is fast and ensures that you only interact with the _unit under test_
-  * 🏙 Shallow rendering ensures that you do _not snapshot past your test's concern_
-  * 🏎 Shallow rendering has shown to be _more performant_ for us than mounting
-* We like _declarative components_ and _Render Props_
-  * 🧠 We can _compose components_ easily while following along their interactions
-  * 🔪 We like _stubbing_ to test individual pieces of logic
-
-Taking all of the above into account we often felt pain when `shallow` rendering a component with lots of children with Render Props. Often things such as:
+Often nested Render Prop based components when `shallow`ly rendered are harder to test than they need to be. Take a look at the following example:
 
 ```js
 let wrapper1;
@@ -56,7 +48,7 @@ it('should match snapshot', () => {
 });
 ```
 
-This quickly got out of hand and the "lines to first `it`" became too many. Tests felt bloated and brittle with a lot of noise around the actual important things. However, the logic felt repetitive which is often a good fit for a tool. This is where `expand` comes into play. The above would become:
+This quickly gets out of hand and the "lines to first `it`" becames too many. Tests feel bloated and brittle with a lot of noise around the actual important things. However, this logic feels repetitive which is often a good fit for a tool. This is where `expand` comes into play. The above would become:
 
 ```js
 let wrapper;
@@ -79,6 +71,16 @@ it('should match snapshot', () => {
 ```
 
 This is way more readable and easier to follow along. At the same time everything is still rendered `shallow`ly and the unit under test is well scoped.
+
+## What assumptions is this built under?
+
+* We _like to shallow render_ and avoid mounting
+  * 🤺 Shallow rendering is fast and ensures that you only interact with the _unit under test_
+  * 🏙 Shallow rendering ensures that you do _not snapshot past your test's concern_
+  * 🏎 Shallow rendering has shown to be _more performant_ for us than mounting
+* We like _declarative components_ and _Render Props_
+  * 🧠 We can _compose components_ easily while following along their interactions
+  * 🔪 We like _stubbing_ to test individual pieces of logic
 
 ## Installation
 
@@ -107,7 +109,7 @@ ShallowWrapper.prototype.expand = expand;
 
 ## Usage
 
-#### `expand(node, { propName: string, props: Object })`
+#### `expand(selector, { propName?: string, props?: Object })`
 
 Expand a `ShallowWrapper` through the passed `node` and `propName` with the passed `props`. The `options` can have:
 
@@ -149,7 +151,7 @@ describe('Component', () => {
 
 _Note_: that when chaining `expand`s you might want to pass options with `{ wrapper: null }` to the last call. This unwraps the rendered componeont automatically for you.
 
-#### `until(node, maxDepth)`
+#### `until(selector, { options?: maxDepth })`
 
 Dives into a `ShallowWrapper` until is finds the passed `node` while being restricted by the `maxDepth`.
 
@@ -157,7 +159,11 @@ Dives into a `ShallowWrapper` until is finds the passed `node` while being restr
 import Icon from 'somewhere';
 
 describe('Component', () => {
-  const wrapper = shallow(<Component />).until(Icon);
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = shallow(<Component />).until(Icon);
+  });
 
   it('should render one `<Icon>`', () => {
     expect(wrapper).toRenderElementTimes(Icon, 1);
@@ -170,3 +176,23 @@ describe('Component', () => {
 ```
 
 _Note_: to get the `toRenderElementTimes` and an `toRender` matcher checkout our [@commercetools/jest-enzyme-matchers](https://github.com/commercetools/jest-enzyme-matchers).
+
+The interesting thing is that you can mix both `until` and `expend`:
+
+```js
+import RenderPropComponent from 'somewhere';
+
+describe('Component', () => {
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = shallow(<Component />)
+      .until(SomeComponent)
+      .expand(RenderPropComponent, { propName: 'render' });
+  });
+
+  it('should render two `<buttons>`', () => {
+    expect(wrapper).toRenderElementTimes('button', 2);
+  });
+});
+```
