@@ -1,3 +1,4 @@
+const omit = require('lodash.omit');
 const { shallow } = require('enzyme');
 
 const shallowExpand = (wrapper, throughNode, options) => {
@@ -17,7 +18,13 @@ const shallowExpand = (wrapper, throughNode, options) => {
     throw new Error(
       `@commercetools/enzyme-extensions/expand: the specified 'propName' "${propName}" is not a function on the wrapper.`
     );
-  const nextWrapper = shallow(render(defaultedOptions.props));
+  const nextWrapper = shallow(
+    render(defaultedOptions.props),
+    // NOTE: We pass down options to `shallow` (e.g. for context)
+    // by omitting our own. For now we hope them to not
+    // cause nameclashes.
+    omit(options, ['propName', 'props'])
+  );
 
   return nextWrapper;
 };

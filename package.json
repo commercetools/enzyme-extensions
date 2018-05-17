@@ -33,6 +33,7 @@
  "homepage": "https://github.com/commercetools/enzyme-extensions#readme",
  "dependencies": {
   "common-tags": "1.7.2",
+  "lodash.omit": "^4.5.0",
   "react-display-name": "0.2.4"
  },
  "devDependencies": {

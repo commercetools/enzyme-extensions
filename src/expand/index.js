@@ -1,3 +1,3 @@
-const { expand } = require('./expand');
+const expand = require('./expand');
 
-exports.expand = expand;
+module.exports.expand = expand;

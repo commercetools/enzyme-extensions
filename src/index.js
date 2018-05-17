@@ -1,5 +1,5 @@
 const { expand } = require('./expand');
 const { until } = require('./until');
 
-exports.expand = expand;
-exports.until = until;
+module.exports.expand = expand;
+module.exports.until = until;
