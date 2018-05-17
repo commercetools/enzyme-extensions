@@ -50,7 +50,7 @@ it('should match snapshot', () => {
 });
 ```
 
-This quickly gets out of hand and the "lines to first `it`" becames too many. Tests feel bloated and brittle with a lot of noise around the actual important things. However, this logic feels repetitive which is often a good fit for a tool. This is where `expand` comes into play. The above would become:
+This quickly gets out of hand and the "lines to first `it`" becames too many. Tests feel bloated and brittle with a lot of noise around the actual important things. However, this logic feels repetitive which is often a good fit for a tool. This is where `expand` comes into play. The above can become:
 
 ```js
 let wrapper;
@@ -74,7 +74,7 @@ it('should match snapshot', () => {
 
 This is way more readable and easier to follow along. At the same time everything is still rendered `shallow`ly and the unit under test is well scoped.
 
-## What assumptions is this built under?
+## What assumptions is this built with?
 
 * We _like to shallow render_ and avoid mounting
   * 🤺 Shallow rendering is fast and ensures that you only interact with the _unit under test_
@@ -155,7 +155,9 @@ _Note_: that when chaining `expand`s you might want to pass options with `{ wrap
 
 #### `until(selector, { options?: maxDepth })`
 
-Dives into a `ShallowWrapper` until is finds the passed `node` while being restricted by the `maxDepth`.
+Dives into a `ShallowWrapper` until is finds the passed `node` while being restricted by the `maxDepth`. The `options` can have:
+
+1.  `maxDepth`: something you may want to not dive too deep into a component's children
 
 ```js
 import Icon from 'somewhere';
