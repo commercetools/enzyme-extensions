@@ -23,14 +23,8 @@ aliases:
     name: Linting
     command: yarn lint
 
-  - &build
-    name: Building
-    command: yarn build
-
   - &unit_test
     name: Unit testing
-    # Limiting the workers of Jest to 10
-    # as the build otherwise dies due to resouce restrictions.
     command: yarn test
 
   - &unit_test_with_coverage
@@ -58,12 +52,11 @@ jobs:
       - checkout
       - restore_cache: *restore_yarn_cache
       - run: *install
-      - run: *build
       - run: *unit_test_with_coverage
 
 workflows:
   version: 2
-  build_and_test:
+  lint_and_test:
     jobs:
       - lint
       - test_unit:
