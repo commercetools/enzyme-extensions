@@ -1,2 +1,5 @@
-export { default as until } from './until';
-export { default as expand } from './expand';
+const { expand } = require('./expand');
+const { until } = require('./until');
+
+exports.expand = expand;
+exports.until = until;

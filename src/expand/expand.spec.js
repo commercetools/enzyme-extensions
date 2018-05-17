@@ -1,8 +1,9 @@
-import React from 'react';
-import Enzyme, { shallow } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
-import ShallowWrapper from 'enzyme/ShallowWrapper';
-import expand from './expand';
+const React = require('react');
+const Enzyme = require('enzyme');
+const { shallow } = Enzyme;
+const Adapter = require('enzyme-adapter-react-16');
+const ShallowWrapper = require('enzyme/ShallowWrapper');
+const expand = require('./expand');
 
 const TestComponent = () => <div />;
 

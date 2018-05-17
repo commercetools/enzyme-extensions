@@ -17,8 +17,8 @@ const shallowRecursively = (wrapper, selector, options, depthMemo = 0) => {
     : shallowRecursively(wrapper.dive(), selector, options, ++depthMemo);
 };
 
-export default function until(selector, options = {}) {
+module.exports = function until(selector, options = {}) {
   return this.single('until', () =>
     shallowRecursively(this, selector, options)
   );
-}
+};

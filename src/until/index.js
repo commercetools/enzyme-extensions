@@ -1,1 +1,3 @@
-export { default } from 'until';
+const { until } = require('./until');
+
+exports.until = until;

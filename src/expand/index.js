@@ -1,1 +1,3 @@
-export { default } from 'expand';
+const { expand } = require('./expand');
+
+exports.expand = expand;

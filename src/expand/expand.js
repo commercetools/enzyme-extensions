@@ -1,4 +1,4 @@
-import { shallow } from 'enzyme';
+const { shallow } = require('enzyme');
 
 const shallowExpand = (wrapper, throughNode, options) => {
   const defaultedOptions = {
@@ -22,6 +22,6 @@ const shallowExpand = (wrapper, throughNode, options) => {
   return nextWrapper;
 };
 
-export default function expand(throughNode, options = {}) {
+module.exports = function(throughNode, options = {}) {
   return this.single('expand', () => shallowExpand(this, throughNode, options));
-}
+};
