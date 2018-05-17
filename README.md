@@ -2,7 +2,9 @@
   <a href="https://commercetools.com/">
     <img alt="commercetools logo" src="http://cdn.rawgit.com/commercetools/press-kit/master/PNG/72DPI/CT%20logo%20chrom%20black%20horizontal%20RGB%2072dpi.png">
   </a>
-  <b>@commercetools/enzyme-extensions</b>
+  <b>@commercetools/enzyme-extensions</b><br /><br />
+
+  <img height="100" alt="Logo" src="https://raw.githubusercontent.com/commercetools/enzyme-extensions/master/logo.jpeg" />
 </p>
 
 <p align="center">

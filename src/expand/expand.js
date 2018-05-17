@@ -18,7 +18,9 @@ const shallowExpand = (wrapper, selector, options) => {
     );
   if (typeof render !== 'function')
     throw new Error(
-      `@commercetools/enzyme-extensions/expand: the specified 'propName' "${propName}" is not a function on the wrapper.`
+      `@commercetools/enzyme-extensions/expand: the specified 'propName' "${
+        defaultedOptions.propName
+      }" is not a function on the wrapper.`
     );
   const nextWrapper = shallow(
     // NOTE: We need to wrap the node in a `div`

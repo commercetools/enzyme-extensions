@@ -7,7 +7,7 @@ const shallowRecursively = (wrapper, selector, options, depthMemo = 0) => {
   if (defaultedOptions.maxDepth && depthMemo >= defaultedOptions.maxDepth)
     throw new Error(
       `@commercetools/enzyme-extensions/until: the specified 'node' was not found before diving ${
-        options.maxDepth
+        defaultedOptions.maxDepth
       } levels deep.`
     );
   if (
