@@ -49,6 +49,7 @@ describe('expand', () => {
     wrapper = shallow(<Host />).expand(Child, {
       propName: 'render',
       props: childProps,
+      wrapper: null,
     });
   });
 

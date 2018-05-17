@@ -1,3 +1,4 @@
+const React = require('react');
 const omit = require('lodash.omit');
 const { shallow } = require('enzyme');
 
@@ -5,6 +6,7 @@ const shallowExpand = (wrapper, throughNode, options) => {
   const defaultedOptions = {
     propName: 'children',
     props: {},
+    wrapper: 'div',
     ...options,
   };
   const hostWrapper = wrapper.find(throughNode);
@@ -19,7 +21,15 @@ const shallowExpand = (wrapper, throughNode, options) => {
       `@commercetools/enzyme-extensions/expand: the specified 'propName' "${propName}" is not a function on the wrapper.`
     );
   const nextWrapper = shallow(
-    render(defaultedOptions.props),
+    // NOTE: We need to wrap the node in a `div`
+    // to allow chaining.
+    defaultedOptions.wrapper
+      ? React.createElement(
+          defaultedOptions.wrapper,
+          {},
+          render(defaultedOptions.props)
+        )
+      : render(defaultedOptions.props),
     // NOTE: We pass down options to `shallow` (e.g. for context)
     // by omitting our own. For now we hope them to not
     // cause nameclashes.

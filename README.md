@@ -76,6 +76,8 @@ describe('Component', () => {
 });
 ```
 
+_Note_: that when chaining `expand`s you might want to pass options with `{ wrapper: null }` to the last call. This unwraps the rendered componeont automatically for you.
+
 #### `until(node, maxDepth)`
 
 Dives into a `ShallowWrapper` until is finds the passed `node` while being restricted by the `maxDepth`.
