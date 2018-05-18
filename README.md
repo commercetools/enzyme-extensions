@@ -160,6 +160,39 @@ ShallowWrapper.prototype.renderProp = renderProp;
 ShallowWrapper.prototype.until = until;
 ```
 
+## Usage
+
+Once set up, you can use the extension in your test files like this:
+
+```js
+import React from 'react'
+import { shallow } from 'enzyme'
+
+describe('when rendering App', () => {
+  const App = () => (
+    <div id="app">
+      <Mouse render={({ x }) => <div>Cursor is at {x}</div>} />
+    </div>
+  );
+
+  // Here we call the render function defined on Mouse and we provide
+  // some custom arguments to it. This means we are effectively mocking
+  // the Mouse component's implementation.
+  // This is great to keep test concerns separate.
+  const wrapper = shallow(<App />)
+      .find(Mouse)
+      // This is where we are actually using the renderProp function
+      // Since we defined it on the prototype in the Installation step,
+      // it does not need to be imported into the test itself.
+      .renderProp(props => props.render({ x: 2 }));
+  });
+
+  it('should render the mouse position', () => {
+    expect(wrapper.contains(<div>Cursor is at 2</div>)).toBe(true);
+  });
+});
+```
+
 ## Documentation
 
 * [`renderProp`](docs/render-prop.md)
