@@ -24,6 +24,7 @@
   "node": ">=8",
   "npm": ">=3"
  },
+ "files": ["src"],
  "keywords": [],
  "author": "Tobias Deekens <tobias.deekens@commercetools.de>",
  "contributors": ["Dominik Ferber <dominik.ferber+npm@gmail.com>"],
