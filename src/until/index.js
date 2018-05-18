@@ -1,3 +1,1 @@
-const until = require('./until');
-
-module.exports.until = until;
+module.exports = require('./until');

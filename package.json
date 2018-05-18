@@ -26,6 +26,7 @@
  },
  "keywords": [],
  "author": "Tobias Deekens <tobias.deekens@commercetools.de>",
+ "contributors": ["Dominik Ferber <dominik.ferber+npm@gmail.com>"],
  "license": "MIT",
  "bugs": {
   "url": "https://github.com/commercetools/enzyme-extensions/issues"

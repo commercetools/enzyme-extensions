@@ -19,60 +19,104 @@
 
 ## What does this look like?
 
-Often nested Render Prop based components when `shallow`ly rendered are harder to test than they need to be. Take a look at the following example:
+Nested Render Prop based components are hard to test when `shallow`ly rendered. Take a look at the following component setup:
 
-```js
-let wrapper1;
-let wrapper2;
-let wrapper3;
-
-beforeEach(() => {
-  wrapper1 = shallow(<Component1 {...props} />);
-  wrapper2 = shallow(
-    <div>
-      {wrapper1.find(RenderPropComponent1).prop('render')({
-        // Assume that these props are defined somewhere
-        propsForRenderPropComponent1,
-      })}
-    </div>
-  );
-  wrapper3 = shallow(
-    <div>
-      {wrapper2.find(RenderPropComponent2).prop('children')({
-        propsForRenderPropComponent2,
-      })}
-    </div>
-  );
-});
-
-it('should match snapshot', () => {
-  expect(wrapper3).toMatchSnapshot();
-});
-```
-
-This quickly gets out of hand and the "lines to first `it`" becames too many. Tests feel bloated and brittle with a lot of noise around the actual important things. However, this logic feels repetitive which is often a good fit for a tool. This is where `expand` comes into play. The above can become:
-
-```js
-let wrapper;
-
-beforeEach(() => {
-  wrapper = shallow(<Component1 {...props} />)
-    .expand(RenderPropComponent1, {
-      propName: 'render',
-      props: propsForRenderPropComponent1,
-    })
-    .expand(RenderPropComponent2, {
-      // The `propName` `children` is the default
-      props: propsForRenderPropComponent2,
+```jsx
+class Mouse extends React.Component {
+  static propTypes = { render: PropTypes.func.isRequired };
+  state = { x: 0, y: 0 };
+  handleMouseMove = event => {
+    this.setState({
+      x: event.clientX,
+      y: event.clientY,
     });
-});
+  };
+  render() {
+    return (
+      <div style={{ height: '100%' }} onMouseMove={this.handleMouseMove}>
+        {this.props.render(this.state)}
+      </div>
+    );
+  }
+}
+```
 
-it('should match snapshot', () => {
-  expect(wrapper3).toMatchSnapshot();
+```jsx
+class App extends React.Component {
+  render() {
+    return (
+      <div style={{ height: '100%' }}>
+        <Mouse
+          render={({ x, y }) => (
+            // The render prop gives us the state we need
+            // to render whatever we want here.
+            <h1>
+              The mouse position is ({x}, {y})
+            </h1>
+          )}
+        />
+      </div>
+    );
+  },
 });
 ```
 
-This is way more readable and easier to follow along. At the same time everything is still rendered `shallow`ly and the unit under test is well scoped.
+If we wanted to test the `render` prop the `<App /` component passes to `<Mouse />`, we'd traditionally have to do:
+
+```jsx
+const wrapper = shallow(<App />);
+const mouseWrapper = shallow(
+  wrapper.find(Mouse).prop('render')({ x: 0, y: 0 })
+);
+
+expect(mouseWrapper.text()).toEqual('The mouse position is (0, 0)');
+```
+
+This quickly gets out of hand when traversing multiple render props, and the "lines to first `it`" explode. Tests feel bloated and brittle, with a lot of noise around the actually important things. However the required setup is repetitive, which is often a good fit for a tool. This is where this package's `renderProp` function comes into play. The above can become:
+
+```jsx
+const wrapper = shallow(<App />)
+  .find(Mouse)
+  .renderProp(props => props.render({ x: 0, y: 0 }));
+
+expect(wrapper.text()).toEqual('The mouse position is (0, 0)');
+```
+
+Here are some examples of how this method simplifies tests:
+
+```diff
+// less setup
+-wrapper = shallow(
+-  shallow(<App />)
+-    .find(Mouse)
+-    .prop('render')({ x: 2 })
+-);
++wrapper = shallow(<App />)
++  .find(Mouse)
++  .renderProp(props => props.render({ x: 2 }));
+```
+
+```diff
+// easier chaining
+-wrapper = shallow(
+-  shallow(
+-    <div>
+-      {shallow(<App />)
+-        .find(Mouse)
+-        .prop('render')({ x: 2 })}
+-    </div>
+-  )
+-    .find(Mouse)
+-    .prop('render')({ y: 4 })
+-);
++wrapper = shallow(<App />)
++  .find(Mouse)
++  .renderProp(props => props.render({ x: 2 }))
++  .find(Mouse)
++  .renderProp(props => props.render({ y: 4 }));
+```
+
+This is more readable and easier to follow. At the same time everything is still rendered `shallow`ly and the unit under test is well scoped.
 
 ## What assumptions is this built with?
 
@@ -86,117 +130,35 @@ This is way more readable and easier to follow along. At the same time everythin
 
 ## Installation
 
-1.  Add package
+### 1. Add package
 
 `yarn add @commercetools/enzyme-extensions -D`
 
-2.  Add a test setup file (test runner dependent)
+### 2. Add a test setup file (test runner dependent)
 
 For Jest you would set up a [`setupTestFrameworkScriptFile`](https://facebook.github.io/jest/docs/configuration.html#setuptestframeworkscriptfile-string).
 Create that file and add it to the jest configuration.
 
-3.  Add expand to Enzyme
+### 3. Add `renderProp` to Enzyme
 
 In that `testFrameworkScriptFile` file, import the extensions and add them to Enzyme
 
 ```js
-import Enzyme, { shallow } from 'enzyme';
+import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-xx';
-import { expand } from '@commercetools/enzyme-extensions';
+import { renderProp, until } from '@commercetools/enzyme-extensions';
 import ShallowWrapper from 'enzyme/ShallowWrapper';
 
+// you likely had this part already
 Enzyme.configure({ adapter: new Adapter() });
-ShallowWrapper.prototype.expand = expand;
+
+// this is the actual integration
+ShallowWrapper.prototype.renderProp = renderProp;
+ShallowWrapper.prototype.until = until;
 ```
 
-## Usage
+## Documentation
 
-#### `expand(selector, { propName?: string, props?: Object })`
-
-Expand a `ShallowWrapper` through the passed `node` and `propName` with the passed `props`. The `options` can have:
-
-1.  `propName`: the prop being the Render Prop - so `children`, `render` or any other `renderThatThingy`
-2.  `props`: the props you want to pass into the Render Prop based component
-3.  `wrapper`: defaults to `div` used to wrap the component. Often it's `null` when wanting to take a snapshot after a sequence of chained `expand`s
-
-_Note_: that any other properties on `options` than listed above are automatially forwarded to `shallow(node, options)`. This allows you to e.g. pass on a stubbed `context`.
-
-```js
-import FunctionAsAChildComponent from 'somewhere';
-
-describe('Component', () => {
-  const wrapper = shallow(<Component />);
-  const nestedWrapperProps = {
-    onChange: jest.fn(),
-    ...props,
-  };
-  let nestedWrapper;
-
-  beforeEach(() => {
-    nestedWrapper = wrapper.expand(FunctionAsAChildComponent, {
-      propName: 'render',
-      props: nestedWrapperProps,
-    });
-  });
-
-  it('should match snapshot', () => {
-    expect(nestedWrapper).toMatchSnapshot();
-  });
-
-  it('should pass `onClick` to `<button>`', () => {
-    nestedWrapper.find('button').prop('onClick')();
-
-    expect(nestedWrapperProps.onChange).toHaveBeenCalled();
-  });
-});
-```
-
-_Note_: that when chaining `expand`s you might want to pass options with `{ wrapper: null }` to the last call. This unwraps the rendered componeont automatically for you.
-
-#### `until(selector, { maxDepth?: number })`
-
-Dives into a `ShallowWrapper` until is finds the passed `node` while being restricted by the `maxDepth`. The `options` can have:
-
-1.  `maxDepth`: something you may want to not dive too deep into a component's children
-
-```js
-import Icon from 'somewhere';
-
-describe('Component', () => {
-  let wrapper;
-
-  beforeEach(() => {
-    wrapper = shallow(<Component />).until(Icon);
-  });
-
-  it('should render one `<Icon>`', () => {
-    expect(wrapper).toRenderElementTimes(Icon, 1);
-  });
-
-  it('should render two `<buttons>`', () => {
-    expect(wrapper).toRenderElementTimes('button', 2);
-  });
-});
-```
-
-_Note_: to get the `toRenderElementTimes` and an `toRender` matcher checkout our [@commercetools/jest-enzyme-matchers](https://github.com/commercetools/jest-enzyme-matchers).
-
-The interesting thing is that you can mix both `until` and `expend`:
-
-```js
-import RenderPropComponent from 'somewhere';
-
-describe('Component', () => {
-  let wrapper;
-
-  beforeEach(() => {
-    wrapper = shallow(<Component />)
-      .until(SomeComponent)
-      .expand(RenderPropComponent, { propName: 'render' });
-  });
-
-  it('should render two `<buttons>`', () => {
-    expect(wrapper).toRenderElementTimes('button', 2);
-  });
-});
-```
+* [`renderProp`](docs/render-prop.md)
+* [`until`](docs/until.md)
+* **DEPRECATED** [`expand`](docs/expand.md)
