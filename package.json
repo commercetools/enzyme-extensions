@@ -1,6 +1,6 @@
 {
  "name": "@commercetools/enzyme-extensions",
- "version": "1.3.1",
+ "version": "2.0.0",
  "description": "Enzyme extensions tailored at improving dealing with shallowly rendered wrappers",
  "main": "src/index.js",
  "scripts": {
@@ -24,10 +24,14 @@
   "node": ">=8",
   "npm": ">=3"
  },
- "files": ["src"],
+ "files": [
+  "src"
+ ],
  "keywords": [],
  "author": "Tobias Deekens <tobias.deekens@commercetools.de>",
- "contributors": ["Dominik Ferber <dominik.ferber+npm@gmail.com>"],
+ "contributors": [
+  "Dominik Ferber <dominik.ferber+npm@gmail.com>"
+ ],
  "license": "MIT",
  "bugs": {
   "url": "https://github.com/commercetools/enzyme-extensions/issues"
