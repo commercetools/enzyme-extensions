@@ -146,15 +146,15 @@ In that `testFrameworkScriptFile` file, import the extensions and add them to En
 ```js
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-xx';
-import { renderProp, until } from '@commercetools/enzyme-extensions';
+import configure from '@commercetools/enzyme-extensions';
 import ShallowWrapper from 'enzyme/ShallowWrapper';
 
 // you likely had this part already
 Enzyme.configure({ adapter: new Adapter() });
 
-// this is the actual integration
-ShallowWrapper.prototype.renderProp = renderProp;
-ShallowWrapper.prototype.until = until;
+// this is the actual integration which behind
+// the scenes extends the prototype of the passed in `ShallowWrapper`
+configure(ShallowWrapper);
 ```
 
 ## Usage
