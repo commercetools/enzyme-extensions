@@ -14,6 +14,9 @@
   <a href="https://codecov.io/gh/commercetools/enzyme-extensions">
     <img alt="Codecov Coverage Status" src="https://img.shields.io/codecov/c/github/commercetools/enzyme-extensions.svg?style=flat-square">
   </a>
+  <a href="https://www.npmjs.com/package/@commercetools/enzyme-extensions">
+    <img src="https://img.shields.io/npm/dw/@commercetools/enzyme-extensions.svg?style=flat-square"" alt="Downloads per Week" />
+  </a>
   <img alt="Made with Coffee" src="https://img.shields.io/badge/made%20with-%E2%98%95%EF%B8%8F%20coffee-yellow.svg">
 </p>
 
