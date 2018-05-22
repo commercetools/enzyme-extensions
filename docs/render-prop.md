@@ -13,7 +13,7 @@ NOTE: can only be called on wrapper of a single non-DOM component element node.
 
 #### Returns
 
-`ShallowWrapper`: A new wrapper that wraps the node returned from the expander function, after it's been shallow rendered.
+`ShallowWrapper`: A new wrapper that wraps the node returned from the expander function, after it's been shallowly rendered.
 
 #### Examples
 
