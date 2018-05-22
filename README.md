@@ -168,7 +168,7 @@ Once set up, you can use the extension in your test files like this:
 import React from 'react'
 import { shallow } from 'enzyme'
 
-describe('when rendering App', () => {
+describe('when rendering `<App>`', () => {
   const App = () => (
     <div id="app">
       <Mouse render={({ x }) => <div>Cursor is at {x}</div>} />
