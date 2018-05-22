@@ -194,4 +194,3 @@ describe('when rendering App', () => {
 
 * [`renderProp`](docs/render-prop.md)
 * [`until`](docs/until.md)
-* **DEPRECATED** [`expand`](docs/expand.md)

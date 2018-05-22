@@ -38,7 +38,7 @@ describe('Component', () => {
 
 _Note_: to get the `toRenderElementTimes` and an `toRender` matcher check out our [@commercetools/jest-enzyme-matchers](https://github.com/commercetools/jest-enzyme-matchers).
 
-The interesting thing is that you can mix both, `until` and [`expand`](../expand/expand.md):
+The interesting thing is that you can mix both, `until` and [`renderProp`](render-prop.md):
 
 ```js
 import RenderPropComponent from 'somewhere';
@@ -49,7 +49,7 @@ describe('Component', () => {
   beforeEach(() => {
     wrapper = shallow(<Component />)
       .until(SomeComponent)
-      .expand(RenderPropComponent, { propName: 'render' });
+      .renderProp(props => props.render(10, 20));
   });
 
   it('should render two `<buttons>`', () => {
