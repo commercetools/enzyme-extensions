@@ -32,68 +32,122 @@ describe('renderProp', () => {
   });
 
   // This test is just a sanity check to verify the orignial, unexpanded output
-  describe('when not expanding', () => {
-    const renderFn = ({ x }) => `Cursor is at ${x}`;
-    beforeEach(() => {
-      App = () => (
-        <div id="app">
-          <Mouse render={renderFn} />
-        </div>
-      );
-      wrapper = shallow(<App />);
-    });
-    it('should render shallowly', () => {
-      expect(
-        wrapper.contains(
+  describe('sanity checks', () => {
+    describe('when not expanding', () => {
+      let renderFn;
+      beforeEach(() => {
+        renderFn = ({ x }) => `Cursor is at ${x}`;
+        App = () => (
           <div id="app">
             <Mouse render={renderFn} />
           </div>
-        )
-      ).toBe(true);
+        );
+        wrapper = shallow(<App />);
+      });
+
+      it('should render shallowly', () => {
+        expect(
+          wrapper.contains(
+            <div id="app">
+              <Mouse render={renderFn} />
+            </div>
+          )
+        ).toBe(true);
+      });
+    });
+
+    describe('when expanding a regular component with children', () => {
+      let Foo;
+      beforeEach(() => {
+        Foo = () => <div>Wow</div>;
+        App = () => (
+          <form>
+            <Foo />
+          </form>
+        );
+        wrapper = shallow(<App />);
+      });
+      it('should return a shallow wrapper containing the render prop output', () => {
+        expect(wrapper.find(Foo)).toHaveLength(1);
+        expect(
+          wrapper.contains(
+            <form>
+              <Foo />
+            </form>
+          )
+        ).toBe(true);
+      });
+    });
+
+    describe('shallow-rendering', () => {
+      const Bar = () => (
+        <div>
+          <div className="in-bar" />
+        </div>
+      );
+      const Foo = () => (
+        <div>
+          <Bar />
+        </div>
+      );
+      beforeEach(() => {
+        wrapper = shallow(<Foo />);
+      });
+      it('renders', () => {
+        expect(wrapper.find('.in-bar')).toHaveLength(0);
+        expect(wrapper.find(Bar)).toHaveLength(1);
+        expect(
+          wrapper
+            .find(Bar)
+            .shallow()
+            .find('.in-bar')
+        ).toHaveLength(1);
+      });
     });
   });
 
-  // This is the first time actually diving down the shallowly rendered wrapper
-  // by using renderProp
-  describe('when expanding by function', () => {
-    beforeEach(() => {
-      App = () => (
-        <div id="app">
-          <Mouse render={({ x }) => <div>Cursor is at {x}</div>} />
-        </div>
-      );
-      // Here we call the render function defined on Mouse and we provide
-      // some custom arguments to it. This means we are effectively mocking
-      // the Mouse component's implementation.
-      // This is great to keep test concerns separate.
-      wrapper = shallow(<App />)
-        .find(Mouse)
-        .renderProp(props => props.render({ x: 2 }));
-    });
-    it('should return a shallow wrapper containing the render prop output', () => {
-      expect(wrapper).toBeInstanceOf(ShallowWrapper);
-      expect(wrapper.contains(<div>Cursor is at 2</div>)).toBe(true);
-    });
-  });
+  describe('API variations', () => {
+    // This is the first time actually diving down the shallowly rendered wrapper
+    // by using renderProp
+    describe('when expanding by function', () => {
+      beforeEach(() => {
+        App = () => (
+          <div id="app">
+            <Mouse render={({ x }) => <div>Cursor is at {x}</div>} />
+          </div>
+        );
+        // Here we call the render function defined on Mouse and we provide
+        // some custom arguments to it. This means we are effectively mocking
+        // the Mouse component's implementation.
+        // This is great to keep test concerns separate.
+        wrapper = shallow(<App />)
+          .find(Mouse)
+          .renderProp(props => props.render({ x: 2 }));
+      });
 
-  describe('when expanding by string', () => {
-    beforeEach(() => {
-      App = () => (
-        <div id="app">
-          <Mouse render={() => <div>Cursor is there</div>} />
-        </div>
-      );
-      // Here we call the render function defined on Mouse and we provide
-      // some custom arguments to it. This means we are effectively mocking
-      // the Mouse component's implementation.
-      // This is great to keep test concerns separate.
-      wrapper = shallow(<App />)
-        .find(Mouse)
-        .renderProp('render');
+      it('should return a shallow wrapper containing the render prop output', () => {
+        expect(wrapper).toBeInstanceOf(ShallowWrapper);
+        expect(wrapper.contains(<div>Cursor is at 2</div>)).toBe(true);
+      });
     });
-    it('should return a shallow wrapper containing the render prop output', () => {
-      expect(wrapper).toBeInstanceOf(ShallowWrapper);
-      expect(wrapper.contains(<div>Cursor is there</div>)).toBe(true);
+
+    describe('when expanding by string', () => {
+      beforeEach(() => {
+        App = () => (
+          <div id="app">
+            <Mouse render={() => <div>Cursor is there</div>} />
+          </div>
+        );
+
+        wrapper = shallow(<App />)
+          .find(Mouse)
+          .renderProp('render');
+      });
+
+      it('should return a shallow wrapper containing the render prop output', () => {
+        expect(wrapper).toBeInstanceOf(ShallowWrapper);
+        expect(wrapper.contains(<div>Cursor is there</div>)).toBe(true);
+      });
     });
   });
 
@@ -123,6 +177,7 @@ describe('renderProp', () => {
         .find(Mouse)
         .renderProp(props => props.render({ y: 4 }));
     });
+
     it('should expand them sequentially', () => {
       expect(wrapper.contains(<div>Cursor is at 2 4</div>)).toBe(true);
     });
@@ -143,6 +198,7 @@ describe('renderProp', () => {
         .at(1)
         .renderProp('children');
     });
+
     it('should return a shallow wrapper containing the render prop output', () => {
       expect(wrapper).toBeInstanceOf(ShallowWrapper);
       expect(wrapper.contains(<div>What we want to render</div>)).toBe(true);
@@ -151,24 +207,23 @@ describe('renderProp', () => {
 
   describe('when context is present on the wrapper', () => {
     beforeEach(() => {
-      App = props => (
+      App = (props, context) => (
         <div id="app">
-          <Mouse render={() => <div>Position is 10</div>} />
+          <Mouse render={() => <div>Position is {context.position}</div>} />
         </div>
       );
       // We need to define the contextTypes so that the App has access to
       // the foo context slice
-      // App.contextTypes = { position: () => ({}) };
+      const fakePropTypeCheck = () => ({});
+      App.contextTypes = { position: fakePropTypeCheck };
 
-      // Here we call the render function defined on Mouse and we provide
-      // some custom arguments to it. This means we are effectively mocking
-      // the Mouse component's implementation.
-      // This is great to keep test concerns separate.
-      wrapper = shallow(<App />)
+      const context = { position: 10 };
+      wrapper = shallow(<App />, { context })
         .find(Mouse)
         .renderProp(props => props.render());
     });
-    it('should return a shallow wrapper containing the render prop output', () => {
+
+    it('should render from context', () => {
       expect(wrapper.contains(<div>Position is 10</div>)).toBe(true);
     });
   });
@@ -190,9 +245,82 @@ describe('renderProp', () => {
         .find(Mouse)
         .renderProp(props => props.render({ x: 2 }));
     });
+
     it('should return a shallow wrapper containing the render prop output', () => {
       expect(wrapper).toBeInstanceOf(ShallowWrapper);
       expect(wrapper.contains('Cursor is at 2')).toBe(true);
+    });
+  });
+
+  describe('when the wrapper starts with the component which has a render prop', () => {
+    let Foo;
+    beforeEach(() => {
+      Foo = () => <div>Wow</div>;
+      App = () => <Mouse render={({ x }) => <Foo x={x} />} />;
+      wrapper = shallow(<App />).renderProp(props => props.render({ x: 2 }));
+    });
+
+    it('should return a shallow wrapper containing the render prop output', () => {
+      expect(wrapper).toBeInstanceOf(ShallowWrapper);
+      expect(wrapper.find(Foo)).toHaveLength(1);
+      expect(wrapper.contains(<Foo x={2} />)).toBe(true);
+    });
+  });
+
+  describe('when expanding a component with children', () => {
+    let Foo;
+    beforeEach(() => {
+      Foo = () => <div>Wow</div>;
+      App = () => (
+        <div id="app">
+          <Mouse
+            render={({ x }) => (
+              <form>
+                <Foo />
+              </form>
+            )}
+          />
+        </div>
+      );
+      wrapper = shallow(<App />)
+        .find(Mouse)
+        .renderProp(props => props.render({ x: 2 }))
+        .shallow();
+    });
+
+    it('should return a shallow wrapper containing the render prop output', () => {
+      expect(wrapper).toBeInstanceOf(ShallowWrapper);
+      expect(wrapper.find(Foo)).toHaveLength(1);
+      expect(
+        wrapper.contains(
+          <form>
+            <Foo />
+          </form>
+        )
+      ).toBe(true);
+    });
+  });
+
+  describe('when expanding a plain component', () => {
+    let Foo;
+    beforeEach(() => {
+      Foo = () => <div>Wow</div>;
+      App = () => (
+        <div id="app">
+          <Mouse render={({ x }) => <Foo someX={x} />} />
+        </div>
+      );
+      wrapper = shallow(<App />)
+        .find(Mouse)
+        .renderProp(props => props.render({ x: 2 }));
+    });
+
+    it('should return a shallow wrapper containing the render prop output', () => {
+      expect(wrapper).toBeInstanceOf(ShallowWrapper);
+      expect(wrapper.find(Foo)).toHaveLength(1);
+      expect(wrapper.contains(<Foo someX={2} />)).toBe(true);
+      expect(wrapper.contains(<div>Wow</div>)).toBe(false);
+      expect(wrapper.shallow().contains(<div>Wow</div>)).toBe(true);
     });
   });
 });
