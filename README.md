@@ -80,7 +80,7 @@ This quickly gets out of hand when traversing multiple render props, and the "li
 ```jsx
 const wrapper = shallow(<App />)
   .find(Mouse)
-  .renderProp(props => props.render({ x: 0, y: 0 }));
+  .renderProp('render', { x: 0, y: 0 });
 
 expect(wrapper.text()).toEqual('The mouse position is (0, 0)');
 ```
@@ -96,7 +96,7 @@ Here are some examples of how this method simplifies tests:
 -);
 +wrapper = shallow(<App />)
 +  .find(Mouse)
-+  .renderProp(props => props.render({ x: 2 }));
++  .renderProp('render', { x: 2 }));
 ```
 
 ```diff
@@ -114,9 +114,9 @@ Here are some examples of how this method simplifies tests:
 -);
 +wrapper = shallow(<App />)
 +  .find(Mouse)
-+  .renderProp(props => props.render({ x: 2 }))
++  .renderProp('render' ,{ x: 2 })
 +  .find(Mouse)
-+  .renderProp(props => props.render({ y: 4 }));
++  .renderProp('render' ,{ y: 4 });
 ```
 
 This is more readable and easier to follow. At the same time everything is still rendered `shallow`ly and the unit under test is well scoped.
@@ -152,11 +152,11 @@ import Adapter from 'enzyme-adapter-react-xx';
 import configure from '@commercetools/enzyme-extensions';
 import ShallowWrapper from 'enzyme/ShallowWrapper';
 
-// you likely had this part already
+// You likely had this part already
 Enzyme.configure({ adapter: new Adapter() });
 
-// this is the actual integration which behind
-// the scenes extends the prototype of the passed in `ShallowWrapper`
+// This is the actual integration.
+// Behind the scenes this extends the prototype of the passed in `ShallowWrapper`
 configure(ShallowWrapper);
 ```
 
@@ -171,7 +171,7 @@ import { shallow } from 'enzyme'
 describe('when rendering `<App>`', () => {
   const App = () => (
     <div id="app">
-      <Mouse render={({ x }) => <div>Cursor is at {x}</div>} />
+      <Mouse render={(x, y) => <div>Cursor is at {x} {y}</div>} />
     </div>
   );
 
@@ -184,7 +184,10 @@ describe('when rendering `<App>`', () => {
       // This is where we are actually using the renderProp function
       // Since we defined it on the prototype in the Installation step,
       // it does not need to be imported into the test itself.
-      .renderProp(props => props.render({ x: 2 }));
+      // The first argument is the name of the prop we want to call,
+      // all remaining arguments are passed as the arguments of the
+      // render prop call
+      .renderProp('render', 2, 4);
   });
 
   it('should render the mouse position', () => {
@@ -193,7 +196,18 @@ describe('when rendering `<App>`', () => {
 });
 ```
 
+## Other functions
+
+`renderProp` is built as an easy to use test helper for the most common cases.
+In case you need more control, you can use `drill` instead. `drill` offers more flexibility as:
+
+* the prop-to-call can be derived from the other props
+* the returned element can be set dynamically
+
+See the [`drill`](docs/drill.md) documentation for more.
+
 ## Documentation
 
 * [`renderProp`](docs/render-prop.md)
+* [`drill`](docs/drill.md)
 * [`until`](docs/until.md)

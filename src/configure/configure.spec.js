@@ -24,4 +24,13 @@ describe('configure', () => {
       );
     });
   });
+
+  describe('`drill`', () => {
+    it('should be assigned on the passed `ShallowWrapper` prototype', () => {
+      expect(ShallowWrapper.prototype).toHaveProperty(
+        'drill',
+        expect.any(Function)
+      );
+    });
+  });
 });

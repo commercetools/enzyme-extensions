@@ -4,19 +4,19 @@ const PropTypes = require('prop-types');
 const { shallow } = Enzyme;
 const Adapter = require('enzyme-adapter-react-16');
 const ShallowWrapper = require('enzyme/ShallowWrapper');
-const renderProp = require('./render-prop');
+const drill = require('./drill');
 
-describe('renderProp', () => {
+describe('drill', () => {
   const Mouse = props => (
     // The render call gets mocked by the parents in the tests
     // The implementation of the Mouse component does not matter.
-    // Using renderProp in tests is a way to "mock" the prop itself.
+    // Using drill in tests is a way to "mock" the prop itself.
     // This allows to keep testing render function passed by the parent, without
     // having to worry about the implementation of Mouse at all.
     //
     // The Math.random() signals that this implementation does not matter when
-    // testing shallowly with renderProp as it will not be used by tests a
-    // user of renderProp would write.
+    // testing shallowly with drill as it will not be used by tests a
+    // user of drill would write.
     <div id="mouse">{props.render({ x: Math.random() })}</div>
   );
   let App;
@@ -24,7 +24,7 @@ describe('renderProp', () => {
 
   beforeAll(() => {
     Enzyme.configure({ adapter: new Adapter() });
-    ShallowWrapper.prototype.renderProp = renderProp;
+    ShallowWrapper.prototype.drill = drill;
   });
 
   afterEach(() => {
@@ -34,8 +34,8 @@ describe('renderProp', () => {
 
   describe('API variations', () => {
     // This is the first time actually diving down the shallowly rendered wrapper
-    // by using renderProp
-    describe('when expanding', () => {
+    // by using drill
+    describe('when expanding by function', () => {
       beforeEach(() => {
         App = () => (
           <div id="app">
@@ -48,7 +48,7 @@ describe('renderProp', () => {
         // This is great to keep test concerns separate.
         wrapper = shallow(<App />)
           .find(Mouse)
-          .renderProp('render', { x: 2 });
+          .drill(props => props.render({ x: 2 }));
       });
 
       it('should return a shallow wrapper containing the render prop output', () => {
@@ -73,7 +73,7 @@ describe('renderProp', () => {
 
         wrapper = shallow(<App />)
           .find(Mouse)
-          .renderProp('render', 2, 3);
+          .drill(props => props.render(2, 3));
       });
 
       it('should return a shallow wrapper containing the render prop output', () => {
@@ -82,30 +82,27 @@ describe('renderProp', () => {
       });
     });
 
-    describe('when the first argument is not a string', () => {
-      it('should throw', () => {
-        expect(() => shallow(<div />).renderProp()).toThrow(
-          '@commercetools/enzyme-extensions/renderProp: first argument must be the name of a prop'
+    describe('when expanding by string', () => {
+      beforeEach(() => {
+        App = () => (
+          <div id="app">
+            <Mouse render={() => <div>Cursor is there</div>} />
+          </div>
         );
+
+        wrapper = shallow(<App />)
+          .find(Mouse)
+          .drill('render');
       });
-    });
-    describe('when the prop does not exist', () => {
-      it('should throw', () => {
-        expect(() => shallow(<div />).renderProp('bar')).toThrow(
-          '@commercetools/enzyme-extensions/renderProp: no prop called "bar" found'
-        );
-      });
-    });
-    describe('when the prop does not contain a function', () => {
-      it('should throw', () => {
-        expect(() => shallow(<div id="foo" />).renderProp('id')).toThrow(
-          '@commercetools/enzyme-extensions/renderProp: expected prop "id" to contain a function, but it holds "string"'
-        );
+
+      it('should return a shallow wrapper containing the render prop output', () => {
+        expect(wrapper).toBeInstanceOf(ShallowWrapper);
+        expect(wrapper.contains(<div>Cursor is there</div>)).toBe(true);
       });
     });
   });
 
-  // It should be possible to chaing renderProp functions.
+  // It should be possible to chaing drill functions.
   // This basically asserts that we're not expanding all Mouse components at once
   describe('when chaining expansions', () => {
     beforeEach(() => {
@@ -127,9 +124,9 @@ describe('renderProp', () => {
 
       wrapper = shallow(<App />)
         .find(Mouse)
-        .renderProp('render', { x: 2 })
+        .drill(props => props.render({ x: 2 }))
         .find(Mouse)
-        .renderProp('render', { y: 4 });
+        .drill(props => props.render({ y: 4 }));
     });
 
     it('should expand them sequentially', () => {
@@ -137,7 +134,7 @@ describe('renderProp', () => {
     });
   });
 
-  // This is technically not a test of renderProp itself, however it shows that
+  // This is technically not a test of drill itself, however it shows that
   // the API is flexible enough to run expansions on a specific node
   describe('when multiple nodes are present', () => {
     beforeEach(() => {
@@ -150,7 +147,7 @@ describe('renderProp', () => {
       wrapper = shallow(<App />)
         .find(Mouse)
         .at(1)
-        .renderProp('children');
+        .drill('children');
     });
 
     it('should return a shallow wrapper containing the render prop output', () => {
@@ -173,7 +170,7 @@ describe('renderProp', () => {
       const context = { position: 10 };
       wrapper = shallow(<App />, { context })
         .find(Mouse)
-        .renderProp('render');
+        .drill(props => props.render());
     });
 
     it('should render from context', () => {
@@ -182,7 +179,7 @@ describe('renderProp', () => {
   });
 
   // This is the first time actually diving down the shallowly rendered wrapper
-  // by using renderProp
+  // by using drill
   describe('when the wrapped function returns a string', () => {
     beforeEach(() => {
       App = () => (
@@ -196,7 +193,7 @@ describe('renderProp', () => {
       // This is great to keep test concerns separate.
       wrapper = shallow(<App />)
         .find(Mouse)
-        .renderProp('render', { x: 2 });
+        .drill(props => props.render({ x: 2 }));
     });
 
     it('should return a shallow wrapper containing the render prop output', () => {
@@ -210,7 +207,7 @@ describe('renderProp', () => {
     beforeEach(() => {
       Foo = () => <div>Wow</div>;
       App = () => <Mouse render={({ x }) => <Foo x={x} />} />;
-      wrapper = shallow(<App />).renderProp('render', { x: 2 });
+      wrapper = shallow(<App />).drill(props => props.render({ x: 2 }));
     });
 
     it('should return a shallow wrapper containing the render prop output', () => {
@@ -237,7 +234,8 @@ describe('renderProp', () => {
       );
       wrapper = shallow(<App />)
         .find(Mouse)
-        .renderProp('render', { x: 2 });
+        .drill(props => props.render({ x: 2 }))
+        .shallow();
     });
 
     it('should return a shallow wrapper containing the render prop output', () => {
@@ -264,7 +262,7 @@ describe('renderProp', () => {
       );
       wrapper = shallow(<App />)
         .find(Mouse)
-        .renderProp('render', { x: 2 });
+        .drill(props => props.render({ x: 2 }));
     });
 
     it('should return a shallow wrapper containing the render prop output', () => {
@@ -272,12 +270,7 @@ describe('renderProp', () => {
       expect(wrapper.find(Foo)).toHaveLength(1);
       expect(wrapper.contains(<Foo someX={2} />)).toBe(true);
       expect(wrapper.contains(<div>Wow</div>)).toBe(false);
-      expect(
-        wrapper
-          .find(Foo)
-          .shallow()
-          .contains(<div>Wow</div>)
-      ).toBe(true);
+      expect(wrapper.shallow().contains(<div>Wow</div>)).toBe(true);
     });
   });
 });
