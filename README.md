@@ -60,8 +60,8 @@ class App extends React.Component {
         />
       </div>
     );
-  },
-});
+  }
+}
 ```
 
 If we wanted to test the `render` prop the `<App /` component passes to `<Mouse />`, we'd traditionally have to do:
@@ -191,7 +191,7 @@ describe('when rendering `<App>`', () => {
   });
 
   it('should render the mouse position', () => {
-    expect(wrapper.contains(<div>Cursor is at 2</div>)).toBe(true);
+    expect(wrapper.equals(<div>Cursor is at 2</div>)).toBe(true);
   });
 });
 ```

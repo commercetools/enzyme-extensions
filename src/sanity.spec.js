@@ -26,7 +26,7 @@ describe('when not expanding', () => {
     );
     const wrapper = shallow(<App />);
     expect(
-      wrapper.contains(
+      wrapper.equals(
         <div id="app">
           <Mouse render={renderFn} />
         </div>
@@ -46,7 +46,7 @@ describe('when expanding a regular component with children', () => {
     const wrapper = shallow(<App />);
     expect(wrapper.find(Foo)).toHaveLength(1);
     expect(
-      wrapper.contains(
+      wrapper.equals(
         <form>
           <Foo />
         </form>
@@ -94,7 +94,7 @@ describe('context', () => {
       const context = { position: 10 };
       const wrapper = shallow(<App />, { context });
       expect(
-        wrapper.contains(
+        wrapper.equals(
           <div id="app">
             <div>Position is 10</div>
           </div>
@@ -122,11 +122,14 @@ describe('context', () => {
           </App>
         </div>
       );
+
       expect(
-        wrapper.contains(
-          <App>
-            <div id="some-app-child" />
-          </App>
+        wrapper.equals(
+          <div>
+            <App>
+              <div id="some-app-child" />
+            </App>
+          </div>
         )
       ).toBe(true);
     });

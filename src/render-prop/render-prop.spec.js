@@ -53,7 +53,7 @@ describe('renderProp', () => {
 
       it('should return a shallow wrapper containing the render prop output', () => {
         expect(wrapper).toBeInstanceOf(ShallowWrapper);
-        expect(wrapper.contains(<div>Cursor is at 2</div>)).toBe(true);
+        expect(wrapper.equals(<div>Cursor is at 2</div>)).toBe(true);
       });
     });
 
@@ -78,7 +78,7 @@ describe('renderProp', () => {
 
       it('should return a shallow wrapper containing the render prop output', () => {
         expect(wrapper).toBeInstanceOf(ShallowWrapper);
-        expect(wrapper.contains(<div>Cursor is at 2 3</div>)).toBe(true);
+        expect(wrapper.equals(<div>Cursor is at 2 3</div>)).toBe(true);
       });
     });
 
@@ -133,7 +133,7 @@ describe('renderProp', () => {
     });
 
     it('should expand them sequentially', () => {
-      expect(wrapper.contains(<div>Cursor is at 2 4</div>)).toBe(true);
+      expect(wrapper.equals(<div>Cursor is at 2 4</div>)).toBe(true);
     });
   });
 
@@ -155,7 +155,7 @@ describe('renderProp', () => {
 
     it('should return a shallow wrapper containing the render prop output', () => {
       expect(wrapper).toBeInstanceOf(ShallowWrapper);
-      expect(wrapper.contains(<div>What we want to render</div>)).toBe(true);
+      expect(wrapper.equals(<div>What we want to render</div>)).toBe(true);
     });
   });
 
@@ -177,7 +177,7 @@ describe('renderProp', () => {
     });
 
     it('should render from context', () => {
-      expect(wrapper.contains(<div>Position is 10</div>)).toBe(true);
+      expect(wrapper.equals(<div>Position is 10</div>)).toBe(true);
     });
   });
 
@@ -201,7 +201,7 @@ describe('renderProp', () => {
 
     it('should return a shallow wrapper containing the render prop output', () => {
       expect(wrapper).toBeInstanceOf(ShallowWrapper);
-      expect(wrapper.contains('Cursor is at 2')).toBe(true);
+      expect(wrapper.equals('Cursor is at 2')).toBe(true);
     });
   });
 
@@ -216,7 +216,7 @@ describe('renderProp', () => {
     it('should return a shallow wrapper containing the render prop output', () => {
       expect(wrapper).toBeInstanceOf(ShallowWrapper);
       expect(wrapper.find(Foo)).toHaveLength(1);
-      expect(wrapper.contains(<Foo x={2} />)).toBe(true);
+      expect(wrapper.equals(<Foo x={2} />)).toBe(true);
     });
   });
 
@@ -244,7 +244,7 @@ describe('renderProp', () => {
       expect(wrapper).toBeInstanceOf(ShallowWrapper);
       expect(wrapper.find(Foo)).toHaveLength(1);
       expect(
-        wrapper.contains(
+        wrapper.equals(
           <form>
             <Foo />
           </form>
@@ -270,13 +270,13 @@ describe('renderProp', () => {
     it('should return a shallow wrapper containing the render prop output', () => {
       expect(wrapper).toBeInstanceOf(ShallowWrapper);
       expect(wrapper.find(Foo)).toHaveLength(1);
-      expect(wrapper.contains(<Foo someX={2} />)).toBe(true);
-      expect(wrapper.contains(<div>Wow</div>)).toBe(false);
+      expect(wrapper.equals(<Foo someX={2} />)).toBe(true);
+      expect(wrapper.equals(<div>Wow</div>)).toBe(false);
       expect(
         wrapper
           .find(Foo)
           .shallow()
-          .contains(<div>Wow</div>)
+          .equals(<div>Wow</div>)
       ).toBe(true);
     });
   });

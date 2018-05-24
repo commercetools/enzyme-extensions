@@ -23,8 +23,8 @@ describe('until', () => {
     });
 
     it('should render (dives to) the wrapper', () => {
-      expect(wrapper.contains(<Foo />)).toBe(true);
-      expect(wrapper.dive().contains(<Div />)).toBe(true);
+      expect(wrapper.equals(<Foo />)).toBe(true);
+      expect(wrapper.dive().equals(<Div />)).toBe(true);
     });
   });
 
@@ -35,8 +35,8 @@ describe('until', () => {
     });
 
     it('should render (dives to) the wrapper', () => {
-      expect(wrapper.contains(<Foo />)).toBe(true);
-      expect(wrapper.dive().contains(<Div />)).toBe(true);
+      expect(wrapper.equals(<Foo />)).toBe(true);
+      expect(wrapper.dive().equals(<Div />)).toBe(true);
     });
   });
 
@@ -58,8 +58,8 @@ describe('until', () => {
     });
 
     it('should render the wrapper', () => {
-      expect(wrapper.contains(<Foo />)).toBe(true);
-      expect(wrapper.dive().contains(<Div />)).toBe(true);
+      expect(wrapper.equals(<Foo />)).toBe(true);
+      expect(wrapper.dive().equals(<Div />)).toBe(true);
     });
   });
 
