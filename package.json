@@ -20,7 +20,7 @@
   "url": "git+https://github.com/commercetools/enzyme-extensions.git"
  },
  "engines": {
-  "node": ">=8",
+  "node": ">=6",
   "npm": ">=3"
  },
  "files": [
