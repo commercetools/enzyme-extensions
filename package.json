@@ -4,7 +4,6 @@
  "description": "Enzyme extensions tailored at improving dealing with shallowly rendered wrappers",
  "main": "src/index.js",
  "scripts": {
-  "postinstall": "check-node-version --package --print",
   "precommit": "lint-staged",
   "format": "npm run format:md && npm run format:js",
   "commitmsg": "commitlint -e $GIT_PARAMS",
@@ -52,7 +51,6 @@
   "babel-preset-env": "1.7.0",
   "babel-preset-react": "6.24.1",
   "babel-preset-stage-0": "^6.24.1",
-  "check-node-version": "3.2.0",
   "codecov": "3.0.2",
   "cross-env": "5.1.6",
   "enzyme": "3.3.0",
