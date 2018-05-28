@@ -18,6 +18,10 @@
     <img src="https://img.shields.io/npm/dw/@commercetools/enzyme-extensions.svg?style=flat-square"" alt="Downloads per Week" />
   </a>
   <img alt="Made with Coffee" src="https://img.shields.io/badge/made%20with-%E2%98%95%EF%B8%8F%20coffee-yellow.svg">
+  <br /><br />
+  Why should you use this? Read: <a href="https://medium.com/@dferber90/test-a-render-prop-6a44e02f4c39">
+    Test a Render Prop!
+  </a><br /><br />                                                                                                            
 </p>
 
 ## What does this look like?
