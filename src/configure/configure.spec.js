@@ -16,15 +16,6 @@ describe('configure', () => {
     });
   });
 
-  describe('`renderProp`', () => {
-    it('should be assigned on the passed `ShallowWrapper` prototype', () => {
-      expect(ShallowWrapper.prototype).toHaveProperty(
-        'renderProp',
-        expect.any(Function)
-      );
-    });
-  });
-
   describe('`drill`', () => {
     it('should be assigned on the passed `ShallowWrapper` prototype', () => {
       expect(ShallowWrapper.prototype).toHaveProperty(

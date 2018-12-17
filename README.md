@@ -21,109 +21,23 @@
   <br /><br />
   Why should you use this? Read: <a href="https://medium.com/@dferber90/test-a-render-prop-6a44e02f4c39">
     Test a Render Prop!
-  </a><br /><br />                                                                                                            
+  </a><br /><br />
 </p>
 
-## What does this look like?
-
-Nested Render Prop based components are hard to test when `shallow`ly rendered. Take a look at the following component setup:
-
-```jsx
-class Mouse extends React.Component {
-  static propTypes = { render: PropTypes.func.isRequired };
-  state = { x: 0, y: 0 };
-  handleMouseMove = event => {
-    this.setState({
-      x: event.clientX,
-      y: event.clientY,
-    });
-  };
-  render() {
-    return (
-      <div style={{ height: '100%' }} onMouseMove={this.handleMouseMove}>
-        {this.props.render(this.state)}
-      </div>
-    );
-  }
-}
-```
-
-```jsx
-class App extends React.Component {
-  render() {
-    return (
-      <div style={{ height: '100%' }}>
-        <Mouse
-          render={({ x, y }) => (
-            // The render prop gives us the state we need
-            // to render whatever we want here.
-            <h1>
-              The mouse position is ({x}, {y})
-            </h1>
-          )}
-        />
-      </div>
-    );
-  }
-}
-```
-
-If we wanted to test the `render` prop the `<App /` component passes to `<Mouse />`, we'd traditionally have to do:
-
-```jsx
-const wrapper = shallow(<App />);
-const mouseWrapper = shallow(
-  wrapper.find(Mouse).prop('render')({ x: 0, y: 0 })
-);
-
-expect(mouseWrapper.text()).toEqual('The mouse position is (0, 0)');
-```
-
-This quickly gets out of hand when traversing multiple render props, and the "lines to first `it`" explode. Tests feel bloated and brittle, with a lot of noise around the actually important things. However the required setup is repetitive, which is often a good fit for a tool. This is where this package's `renderProp` function comes into play. The above can become:
-
-```jsx
-const wrapper = shallow(<App />)
-  .find(Mouse)
-  .renderProp('render', { x: 0, y: 0 });
-
-expect(wrapper.text()).toEqual('The mouse position is (0, 0)');
-```
-
-Here are some examples of how this method simplifies tests:
-
-```diff
-// less setup
--wrapper = shallow(
--  shallow(<App />)
--    .find(Mouse)
--    .prop('render')({ x: 2 })
--);
-+wrapper = shallow(<App />)
-+  .find(Mouse)
-+  .renderProp('render', { x: 2 }));
-```
-
-```diff
-// easier chaining
--wrapper = shallow(
--  shallow(
--    <div>
--      {shallow(<App />)
--        .find(Mouse)
--        .prop('render')({ x: 2 })}
--    </div>
--  )
--    .find(Mouse)
--    .prop('render')({ y: 4 })
--);
-+wrapper = shallow(<App />)
-+  .find(Mouse)
-+  .renderProp('render' ,{ x: 2 })
-+  .find(Mouse)
-+  .renderProp('render' ,{ y: 4 });
-```
-
-This is more readable and easier to follow. At the same time everything is still rendered `shallow`ly and the unit under test is well scoped.
+> **NOTE** This package used to provide a `renderProp` test helper, which [is now part of `enzyme` itself](https://github.com/airbnb/enzyme/blob/master/CHANGELOG.md#380) as of v3.8.0 🎈.
+>
+> We therefore dropped `renderProp` in v4.0.0 of this package. We recommend to use `renderProp` from enzyme itself instead.
+>
+> Be aware that [the API has changed](https://github.com/airbnb/enzyme/pull/1891#issue-228765309) while moving the function to enzyme.
+>
+> ```js
+> // before
+> wrapper.renderProp('foo', 10, 20);
+> // after
+> wrapper.renderProp('foo')(10, 20);
+> ```
+>
+> <img src="https://cultofthepartyparrot.com/parrots/parrot.gif" alt="party-parrot" /> We are happy that our little helper has made it into `enzyme`.
 
 ## What assumptions is this built with?
 
@@ -146,7 +60,7 @@ This is more readable and easier to follow. At the same time everything is still
 For Jest you would set up a [`setupTestFrameworkScriptFile`](https://facebook.github.io/jest/docs/configuration.html#setuptestframeworkscriptfile-string).
 Create that file and add it to the jest configuration.
 
-### 3. Add `renderProp` to Enzyme
+### 3. Extend Enzyme with this package's helpers
 
 In that `testFrameworkScriptFile` file, import the extensions and add them to Enzyme
 
@@ -169,13 +83,19 @@ configure(ShallowWrapper);
 Once set up, you can use the extension in your test files like this:
 
 ```js
-import React from 'react'
-import { shallow } from 'enzyme'
+import React from 'react';
+import { shallow } from 'enzyme';
 
 describe('when rendering `<App>`', () => {
   const App = () => (
     <div id="app">
-      <Mouse render={(x, y) => <div>Cursor is at {x} {y}</div>} />
+      <Mouse
+        render={(x, y) => (
+          <div>
+            Cursor is at {x} {y}
+          </div>
+        )}
+      />
     </div>
   );
 
@@ -184,25 +104,22 @@ describe('when rendering `<App>`', () => {
   // the Mouse component's implementation.
   // This is great to keep test concerns separate.
   const wrapper = shallow(<App />)
-      .find(Mouse)
-      // This is where we are actually using the renderProp function
-      // Since we defined it on the prototype in the Installation step,
-      // it does not need to be imported into the test itself.
-      // The first argument is the name of the prop we want to call,
-      // all remaining arguments are passed as the arguments of the
-      // render prop call
-      .renderProp('render', 2, 4);
-  });
+    .find(Mouse)
+    // This is where we are actually using the drill function
+    // Since we defined it on the prototype in the Installation step,
+    // it does not need to be imported into the test itself.
+    // We can call any property dynamically and even derive the property to
+    // call depending on the props which are passed as the arguments of the
+    // function passed to `drill`.
+    .drill(props => props.render(10, 20));
 
   it('should render the mouse position', () => {
-    expect(wrapper.equals(<div>Cursor is at 2</div>)).toBe(true);
+    expect(wrapper.equals(<div>Cursor is at 10 20</div>)).toBe(true);
   });
 });
 ```
 
-## Other functions
-
-`renderProp` is built as an easy to use test helper for the most common cases.
+Enzyme's `renderProp` is built as an easy to use test helper for the most common cases.
 In case you need more control, you can use `drill` instead. `drill` offers more flexibility as:
 
 * the prop-to-call can be derived from the other props
@@ -212,6 +129,5 @@ See the [`drill`](docs/drill.md) documentation for more.
 
 ## Documentation
 
-* [`renderProp`](docs/render-prop.md)
 * [`drill`](docs/drill.md)
 * [`until`](docs/until.md)
