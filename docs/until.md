@@ -1,6 +1,6 @@
 # `until(selector, options)`
 
-Dives into a `ShallowWrapper` until is finds the passed `node` while being restricted by the `maxDepth`.
+Dives into a `ShallowWrapper` until it finds the passed `node` while being restricted by the `maxDepth`.
 
 NOTE: can only be called on wrapper of a single non-DOM component element node.
 
@@ -38,7 +38,7 @@ describe('Component', () => {
 
 _Note_: to get the `toRenderElementTimes` and an `toRender` matcher check out our [@commercetools/jest-enzyme-matchers](https://github.com/commercetools/jest-enzyme-matchers).
 
-The interesting thing is that you can mix both, `until` and [`renderProp`](render-prop.md):
+The interesting thing is that you can mix both, `until` and Enzyme's `renderProp`:
 
 ```js
 import RenderPropComponent from 'somewhere';
@@ -49,7 +49,7 @@ describe('Component', () => {
   beforeEach(() => {
     wrapper = shallow(<Component />)
       .until(SomeComponent)
-      .renderProp(props => props.render(10, 20));
+      .renderProp('render')(10, 20);
   });
 
   it('should render two `<buttons>`', () => {
