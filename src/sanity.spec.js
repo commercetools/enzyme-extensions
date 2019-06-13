@@ -1,30 +1,30 @@
-const React = require('react');
-const Enzyme = require('enzyme');
-const PropTypes = require('prop-types');
-const { shallow } = Enzyme;
-const Adapter = require('enzyme-adapter-react-16');
-const ShallowWrapper = require('enzyme/ShallowWrapper');
+/* eslint-disable react/display-name */
+import React from 'react';
+import PropTypes from 'prop-types';
+import { shallow, configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
 
 // This is a test suite to ensure some enzyme behavior these extensions assume
 const Mouse = props => (
+  // eslint-disable-next-line react/prop-types
   <div id="mouse">{props.render({ x: Math.random() })}</div>
 );
 let App;
 let wrapper;
 
 beforeAll(() => {
-  Enzyme.configure({ adapter: new Adapter() });
+  configure({ adapter: new Adapter() });
 });
 
 describe('when not expanding', () => {
   it('should render shallowly', () => {
     const renderFn = ({ x }) => `Cursor is at ${x}`;
-    const App = () => (
+    App = () => (
       <div id="app">
         <Mouse render={renderFn} />
       </div>
     );
-    const wrapper = shallow(<App />);
+    wrapper = shallow(<App />);
     expect(
       wrapper.equals(
         <div id="app">
@@ -38,12 +38,12 @@ describe('when not expanding', () => {
 describe('when expanding a regular component with children', () => {
   it('should return a shallow wrapper containing the render prop output', () => {
     const Foo = () => <div>Wow</div>;
-    const App = () => (
+    App = () => (
       <form>
         <Foo />
       </form>
     );
-    const wrapper = shallow(<App />);
+    wrapper = shallow(<App />);
     expect(wrapper.find(Foo)).toHaveLength(1);
     expect(
       wrapper.equals(
@@ -67,7 +67,7 @@ describe('shallow-rendering', () => {
         <Bar />
       </div>
     );
-    const wrapper = shallow(<Foo />);
+    wrapper = shallow(<Foo />);
     expect(wrapper.find('.in-bar')).toHaveLength(0);
     expect(wrapper.find(Bar)).toHaveLength(1);
     expect(
@@ -82,7 +82,7 @@ describe('shallow-rendering', () => {
 describe('context', () => {
   describe('when top-level component requires context', () => {
     it('should render from context', () => {
-      const App = (props, context) => (
+      App = (props, context) => (
         <div id="app">
           <div>Position is {context.position}</div>
         </div>
@@ -92,43 +92,11 @@ describe('context', () => {
       App.contextTypes = { position: PropTypes.number.isRequired };
 
       const context = { position: 10 };
-      const wrapper = shallow(<App />, { context });
+      wrapper = shallow(<App />, { context });
       expect(
         wrapper.equals(
           <div id="app">
             <div>Position is 10</div>
-          </div>
-        )
-      ).toBe(true);
-    });
-  });
-
-  describe('when nested component requires context', () => {
-    it('should render from context', () => {
-      const App = (props, context) => (
-        <div id="app">
-          <div>Position is {context.position}</div>
-        </div>
-      );
-      // We need to define the contextTypes so that the App has access to
-      // the foo context slice
-      App.contextTypes = { position: PropTypes.number.isRequired };
-
-      // we are nesting so we don't need to pass the context of App
-      const wrapper = shallow(
-        <div>
-          <App>
-            <div id="some-app-child" />
-          </App>
-        </div>
-      );
-
-      expect(
-        wrapper.equals(
-          <div>
-            <App>
-              <div id="some-app-child" />
-            </App>
           </div>
         )
       ).toBe(true);

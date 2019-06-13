@@ -1,10 +1,11 @@
-const React = require('react');
-const Enzyme = require('enzyme');
-const PropTypes = require('prop-types');
-const { shallow } = Enzyme;
-const Adapter = require('enzyme-adapter-react-16');
-const ShallowWrapper = require('enzyme/ShallowWrapper');
-const drill = require('./drill');
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
+import React from 'react';
+import PropTypes from 'prop-types';
+import { shallow, configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+import ShallowWrapper from 'enzyme/ShallowWrapper';
+import drill from './drill';
 
 describe('drill', () => {
   const Mouse = props => (
@@ -23,7 +24,7 @@ describe('drill', () => {
   let wrapper;
 
   beforeAll(() => {
-    Enzyme.configure({ adapter: new Adapter() });
+    configure({ adapter: new Adapter() });
     ShallowWrapper.prototype.drill = drill;
   });
 
@@ -224,7 +225,7 @@ describe('drill', () => {
       App = () => (
         <div id="app">
           <Mouse
-            render={({ x }) => (
+            render={() => (
               <form>
                 <Foo />
               </form>

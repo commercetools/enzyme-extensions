@@ -8,7 +8,7 @@ NOTE: can only be called on wrapper of a single non-DOM component element node.
 
 1.  `selector` ([`EnzymeSelector`](../selector.md)): The selector to match.
 2.  `options` (`Object` [optional]):
-    * `maxDepth`: Restricts how deep the function dives into a component's children
+    - `maxDepth`: Restricts how deep the function dives into a component's children
 
 #### Returns
 

@@ -1,1 +1,1 @@
-module.exports = require('./until');
+export { default } from './until';

@@ -1,30 +1,34 @@
-
 ---
 parser: babel-eslint
 parserOptions:
-  sourceType: module
-  ecmaVersion: 6
   ecmaFeatures:
-    modules: true
-    experimentalObjectRestSpread: true
+    jsx: true
+  ecmaVersion: 8
+  sourceType: module
 extends:
-  - prettier
+  - airbnb-base
   - plugin:jest/recommended
+  - plugin:react/recommended
+  - prettier
+  - prettier/react
 env:
+  browser: true
   es6: true
   jest: true
+  node: true
+  mocha: false
 plugins:
-  - prettier
+  - import
   - jest
+  - jsx-a11y
+  - prettier
+  - react
 rules:
-  prettier/prettier:
-  - error
-  - trailingComma: es5
-    singleQuote: true
-  jest/no-disabled-tests: warn
-  jest/no-focused-tests: error
-  jest/no-identical-title: error
-  jest/valid-expect: error
-  max-nested-callbacks:
-  - error
-  - 20
+  "no-void": 0
+  "no-use-before-define":
+    - error
+    - functions: false
+  "no-new-wrappers": 0
+settings:
+  react:
+    version: 'detect'

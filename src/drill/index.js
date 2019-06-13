@@ -1,1 +1,1 @@
-module.exports = require('./drill');
+export { default } from './drill';

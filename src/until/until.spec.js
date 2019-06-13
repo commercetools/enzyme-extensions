@@ -1,9 +1,9 @@
-const React = require('react');
-const Enzyme = require('enzyme');
-const { shallow } = Enzyme;
-const Adapter = require('enzyme-adapter-react-16');
-const ShallowWrapper = require('enzyme/ShallowWrapper');
-const until = require('./until');
+/* eslint-disable react/display-name */
+import React from 'react';
+import { shallow, configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+import ShallowWrapper from 'enzyme/ShallowWrapper';
+import until from './until';
 
 const Div = () => <div />;
 const Foo = () => <Div />;
@@ -12,7 +12,7 @@ const hoc = Component => () => <Component />;
 describe('until', () => {
   let wrapper;
   beforeAll(() => {
-    Enzyme.configure({ adapter: new Adapter() });
+    configure({ adapter: new Adapter() });
     ShallowWrapper.prototype.until = until;
   });
 

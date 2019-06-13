@@ -1,3 +1,5 @@
+version: 2.1
+
 aliases:
   - &working_directory ~/enzyme-extensions
 
@@ -12,6 +14,7 @@ aliases:
     key: v1-yarn-cache-{{ checksum "yarn.lock" }}
     paths:
       - ~/.cache/yarn
+      - node_modules
 
   - &install
     name: Installing
@@ -27,38 +30,44 @@ aliases:
     name: Unit testing
     command: yarn test
 
-  - &unit_test_with_coverage
-    name: Unit testing (with coverage report)
-    command: yarn test:ci:coverage
+executors:
+  node_10:
+    docker:
+      - image: circleci/node:10.16
+    working_directory: *working_directory
 
-node6Environment: &node10Environment
-  docker:
-    - image: circleci/node:10
-  working_directory: *working_directory
-
-version: 2
-jobs:
-  lint:
-    <<: *node10Environment
+commands:
+  install_dependencies:
+    description: 'Installing dependencies'
     steps:
       - checkout
       - restore_cache: *restore_yarn_cache
-      - run: *install
+      - run: yarn install --pure-lockfile
       - save_cache: *save_yarn_cache
-      - run: *lint
-  test_unit:
-    <<: *node10Environment
+  lint:
+    description: 'Running linters'
     steps:
-      - checkout
-      - restore_cache: *restore_yarn_cache
-      - run: *install
-      - run: *unit_test_with_coverage
+      - run: yarn lint
+  unit_test:
+    description: 'Running tests'
+    steps:
+      - run: yarn test
+  build:
+    description: 'Building production bundles'
+    steps:
+      - run: yarn build
+
+jobs:
+  lint_and_test:
+    executor: node_10
+    steps:
+      - install_dependencies
+      - lint
+      - unit_test
+      - build
 
 workflows:
   version: 2
-  lint_and_test:
+  build_and_test:
     jobs:
-      - lint
-      - test_unit:
-          requires:
-            - lint
+      - lint_and_test
