@@ -41,13 +41,13 @@
 
 ## What assumptions is this built with?
 
-* We _like to shallow render_ and avoid mounting
-  * 🤺 Shallow rendering is fast and ensures that you only interact with the _unit under test_
-  * 🏙 Shallow rendering ensures that you do _not snapshot past your test's concern_
-  * 🏎 Shallow rendering has shown to be _more performant_ for us than mounting
-* We like _declarative components_ and _Render Props_
-  * 🧠 We can _compose components_ easily while following along their interactions
-  * 🔪 We like _stubbing_ to test individual pieces of logic
+- We _like to shallow render_ and avoid mounting
+  - 🤺 Shallow rendering is fast and ensures that you only interact with the _unit under test_
+  - 🏙 Shallow rendering ensures that you do _not snapshot past your test's concern_
+  - 🏎 Shallow rendering has shown to be _more performant_ for us than mounting
+- We like _declarative components_ and _Render Props_
+  - 🧠 We can _compose components_ easily while following along their interactions
+  - 🔪 We like _stubbing_ to test individual pieces of logic
 
 ## Installation
 
@@ -122,12 +122,12 @@ describe('when rendering `<App>`', () => {
 Enzyme's `renderProp` is built as an easy to use test helper for the most common cases.
 In case you need more control, you can use `drill` instead. `drill` offers more flexibility as:
 
-* the prop-to-call can be derived from the other props
-* the returned element can be set dynamically
+- the prop-to-call can be derived from the other props
+- the returned element can be set dynamically
 
 See the [`drill`](docs/drill.md) documentation for more.
 
 ## Documentation
 
-* [`drill`](docs/drill.md)
-* [`until`](docs/until.md)
+- [`drill`](docs/drill.md)
+- [`until`](docs/until.md)
