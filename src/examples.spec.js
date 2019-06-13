@@ -1,26 +1,27 @@
-const React = require('react');
-const Enzyme = require('enzyme');
-const PropTypes = require('prop-types');
-const { shallow } = Enzyme;
-const Adapter = require('enzyme-adapter-react-16');
-const ShallowWrapper = require('enzyme/ShallowWrapper');
+/* eslint-disable react/prop-types */
+import React from 'react';
+import { shallow, configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+import ShallowWrapper from 'enzyme/ShallowWrapper';
+import drill from './drill';
 
 // This is a test suite to ensure the examples are working
 beforeAll(() => {
-  Enzyme.configure({ adapter: new Adapter() });
-  ShallowWrapper.prototype.drill = require('../src/drill');
+  configure({ adapter: new Adapter() });
+  ShallowWrapper.prototype.drill = drill;
 });
 
 describe('drill', () => {
   class Mouse extends React.Component {
-    static propTypes = { render: PropTypes.func.isRequired };
     state = { x: 0, y: 0 };
+
     handleMouseMove = event => {
       this.setState({
         x: event.clientX,
         y: event.clientY,
       });
     };
+
     render() {
       return (
         <div style={{ height: '100%' }} onMouseMove={this.handleMouseMove}>
@@ -30,21 +31,17 @@ describe('drill', () => {
     }
   }
 
-  class App extends React.Component {
-    render() {
-      return (
-        <div style={{ height: '100%' }}>
-          <Mouse
-            render={(x = 0, y = 0) => (
-              <h1>
-                The mouse position is {x}, {y}
-              </h1>
-            )}
-          />
-        </div>
-      );
-    }
-  }
+  const App = () => (
+    <div style={{ height: '100%' }}>
+      <Mouse
+        render={(x = 0, y = 0) => (
+          <h1>
+            The mouse position is {x}, {y}
+          </h1>
+        )}
+      />
+    </div>
+  );
 
   it('should work with multiple arguments', () => {
     const wrapper = shallow(<App />)

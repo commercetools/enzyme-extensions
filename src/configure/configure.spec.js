@@ -1,6 +1,6 @@
-const configure = require('./configure');
+import configure from './configure';
 
-const ShallowWrapper = function() {};
+const ShallowWrapper = function ShallowWrapper() {};
 
 describe('configure', () => {
   beforeAll(() => {

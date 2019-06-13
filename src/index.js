@@ -1,1 +1,1 @@
-module.exports = require('./configure');
+export { default } from './configure';
